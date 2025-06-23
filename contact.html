@@ -7,20 +7,30 @@
     <title>RESQLINK - Contact Us</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styleMain.css" type="text/css">
+    <script>
+    function toggleMenu() {
+    document.getElementById("navLinks").classList.toggle("show");
+    }
+    </script>
 </head>
 
 <body>
-    <header>
-        <div>
-            <h1>RESQLINK</h1>
-        </div>
-        <nav>
-            <a href="index.html">Utama</a>
-            <a href="info.html">Info</a>
-            <a href="contact.html">Hubungi Kami</a>
-        </nav>
-        <button><a href="victimsloginVictim.php">Login</a></button>
-    </header>
+     <header>
+  <div class="header-left">
+    <div class="burger" onclick="toggleMenu()">☰</div>
+    <h1>RESQLINK</h1>
+  </div>
+  <nav class="nav-links" id="navLinks">
+    <a href="index.html">Utama</a>
+    <a href="info.html">Info</a>
+    <a href="contact.html">Hubungi Kami</a>
+
+  </nav>
+  <div class="user-info">
+      <a href="loginVictim.php" id="logout">Log In</a>
+    </div>
+  </div>
+</header>
 
     <section class="box1">
         <h2>Contact Us</h2>

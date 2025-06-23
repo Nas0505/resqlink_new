@@ -13,35 +13,43 @@ require('fetchPosts.php');
     <title>RESQLINK - Main</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styleMain.css" type="text/css">
+    <script>
+    function toggleMenu() {
+    document.getElementById("navLinks").classList.toggle("show");
+    }
+    </script>
 </head>
 
 <body>
-    <header>
-        <div>
-            <h1>RESQLINK</h1>
-        </div>
-        <nav>
-            <a href="victims.php">Utama</a>
-            <a href="infoLogin.php">Info</a>
-            <a href="contactLogin.php">Hubungi Kami</a>
-            <a href="helpRequestForm.php">Mohon Bantuan</a>
-            <a href="notification.php">Notifikasi</a>
-
-        </nav>
-         <div class="user-info">
-            <a href= "profile.php"><img src="<?php echo htmlspecialchars($profile_pic); ?>"  alt="User Icon" class="profilepic"></a>
-            <div class="user-text"><?php echo htmlspecialchars($full_name); ?><br> 
-            <a href="logout.php" class="logout-btn">Logout</a>
-            </div> 
-        </div>
-    </header>
+<header>
+  <div class="header-left">
+    <div class="burger" onclick="toggleMenu()">☰</div>
+    <h1>RESQLINK</h1>
+  </div>
+  <nav class="nav-links" id="navLinks">
+    <a href="victims.php">Utama</a>
+    <a href="infoLogin.php">Info</a>
+    <a href="contactLogin.php">Hubungi Kami</a>
+    <a href="helpRequestForm.php">Mohon Bantuan</a>
+    <a href="notification.php">Notifikasi</a>
+  </nav>
+  <div class="user-info">
+    <a href="profile.php">
+      <img src="<?php echo htmlspecialchars($profile_pic); ?>" alt="User Icon" class="profilepic">
+    </a>
+    <div class="user-text">
+      <?php echo htmlspecialchars($full_name); ?><br>
+      <a href="logout.php" id="logout">Log Out</a>
+    </div>
+  </div>
+</header>
 
     <section class="banner">
         <section class="banner-slider">
             <div class="slides">
-              <img src="banner.png" class="banner" alt="Slide 1" />
-              <img src="2.jpg" class="banner" alt="Slide 2" />
-              <img src="1.jpg" class="banner" alt="Slide 3" />
+              <img src="uploads/banner.png" class="banner" alt="Slide 1" />
+              <img src="uploads/2.jpg" class="banner" alt="Slide 2" />
+              <img src="uploads/1.jpg" class="banner" alt="Slide 3" />
             </div>
           </section>
     </section>

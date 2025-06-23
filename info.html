@@ -6,26 +6,35 @@
     <title>RESQLINK - Info</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styleMain.css" type="text/css">
+    <script>
+    function toggleMenu() {
+    document.getElementById("navLinks").classList.toggle("show");
+    }
+    </script>
 </head>
 
 <body>
     <header>
-        <div>
-            <h1>RESQLINK</h1>
-        </div>
-        <nav>
-            <a href="index.html">Utama</a>
-            <a href="info.html">Info</a>
-            <a href="contact.html">Hubungi Kami</a>
-        </nav>
-        <button><a href="loginVictim.php">Login</a></button>
-    </header>
+  <div class="header-left">
+    <div class="burger" onclick="toggleMenu()">☰</div>
+    <h1>RESQLINK</h1>
+  </div>
+  <nav class="nav-links" id="navLinks">
+    <a href="index.html">Utama</a>
+    <a href="info.html">Info</a>
+    <a href="contact.html">Hubungi Kami</a>
+  </nav>
+  <div class="user-info">
+      <a href="loginVictim.php" id="logout">Log In</a>
+    </div>
+  </div>
+</header>
 
     <section class="box1">
-        <h2>About Us</h2>
-        <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Rerum nulla quam ducimus ad unde vel porro excepturi facere, magnam quis aspernatur eius iste alias labore cupiditate, itaque quaerat quod. Provident!
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Nihil soluta beatae consectetur, ullam vitae, vel expedita modi aliquid ipsum facere deserunt eos vero hic aliquam fuga dolorem adipisci, repellendus enim.
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Nihil soluta beatae consectetur, ullam vitae, vel expedita modi aliquid ipsum facere deserunt eos vero hic aliquam fuga dolorem adipisci, repellendus enim.
+        <h2>Tentang Kami</h2>
+        <p>ResQLink merupakan sebuah sistem berasaskan web yang dibangunkan bagi menyelaras bantuan bencana banjir antara mangsa dan pertubuhan bukan kerajaan (NGO) secara lebih teratur dan efisien. Dalam situasi bencana, ramai mangsa terpaksa menggunakan media sosial seperti Facebook atau TikTok untuk meminta bantuan kerana tiada platform khusus yang dapat menghubungkan mereka dengan penyelamat.
+            Melalui ResQLink, mangsa banjir boleh menghantar permintaan bantuan secara terus dengan menyertakan lokasi semasa dan keperluan seperti makanan, air bersih atau bantuan pembersihan. NGO pula boleh melihat permintaan ini dalam masa nyata dan menghantar bantuan serta menyusun tugasan sukarelawan dengan lebih sistematik.
+            ResQLink bertujuan menjadi pusat sehenti yang memudahkan komunikasi, pengesanan mangsa, serta pengagihan bantuan secara telus dan berkesan.
         </p>
     </section>
 
@@ -33,18 +42,12 @@
         <h2>NGO di bawah kami</h2>
         <div id="ngo">
             <p>UTeM</p>
-            <p>located in Melaka</p>
-            <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quaerat commodi deserunt distinctio explicabo laboriosam accusantium quos quibusdam voluptates quisquam est vero nulla blanditiis maxime maiores, quidem molestias reiciendis vel aliquam.</p>
         </div>
         <div id="ngo">
-            <p>UTeM</p>
-            <p>located in Melaka</p>
-            <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quaerat commodi deserunt distinctio explicabo laboriosam accusantium quos quibusdam voluptates quisquam est vero nulla blanditiis maxime maiores, quidem molestias reiciendis vel aliquam.</p>
+            <p>MyCARE (Humanitarian Care Malaysia)</p>
         </div>
         <div id="ngo">
-            <p>UTeM</p>
-            <p>located in Melaka</p>
-            <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quaerat commodi deserunt distinctio explicabo laboriosam accusantium quos quibusdam voluptates quisquam est vero nulla blanditiis maxime maiores, quidem molestias reiciendis vel aliquam.</p>
+            <p>Yayasan Kebajikan Negara (YKN)</p>
         </div>
     </section>
 

@@ -6,27 +6,36 @@
     <title>RESQLINK - Main</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styleMain.css" type="text/css">
+    <script>
+    function toggleMenu() {
+    document.getElementById("navLinks").classList.toggle("show");
+    }
+    </script>
 </head>
 
 <body>
     <header>
-        <div>
-            <h1>RESQLINK</h1>
-        </div>
-        <nav>
-            <a href="index.html">Utama</a>
-            <a href="info.html">Info</a>
-            <a href="contact.html">Hubungi Kami</a>
-        </nav>
-        <a href="loginVictim.php" class="logout-btn">Log In</a>
-    </header>
+  <div class="header-left">
+    <div class="burger" onclick="toggleMenu()">☰</div>
+    <h1>RESQLINK</h1>
+  </div>
+  <nav class="nav-links" id="navLinks">
+    <a href="index.html">Utama</a>
+    <a href="info.html">Info</a>
+    <a href="contact.html">Hubungi Kami</a>
+  </nav>
+  <div class="user-info">
+      <a href="loginVictim.php" id="logout">Log In</a>
+    </div>
+  </div>
+</header>
 
     <section class="banner">
         <section class="banner-slider">
-            <div class="slides">
-              <img src="banner.png" alt="Slide 1" />
-              <img src="2.jpg" alt="Slide 2" />
-              <img src="1.jpg" alt="Slide 3" />
+           <div class="slides">
+              <img src="uploads/banner.png" class="banner" alt="Slide 1" />
+              <img src="uploads/2.jpg" class="banner" alt="Slide 2" />
+              <img src="uploads/1.jpg" class="banner" alt="Slide 3" />
             </div>
           </section>
     </section>
@@ -34,40 +43,15 @@
     <div class="announcement-bar">
         <div class="announcement-label">Pengumuman</div>
         <div class="announcement-text">
-          <marquee behavior="scroll" direction="left">announce announce announce announce</marquee>
+          <marquee behavior="scroll" direction="left">Sila Log masuk untuk makluman terkini</marquee>
         </div>
       </div>
 
     <section class="flood-stats">
         <h2>Banjir di Malaysia</h2>
-        <p>Kemaskini pada 12/4/2025</p>
-        <table>
-            <thead>
-                <tr>
-                    <th>Negeri</th>
-                    <th>Jumlah mangsa</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Johor</td>
-                    <td>2,000</td>
-                </tr>
-                <tr>
-                    <td>Selangor</td>
-                    <td>1,200</td>
-                </tr>
-            </tbody>
-        </table>
-    </section>
-
-    <section class="message-box">
-        <h3>Pesanan</h3>
-        <div class="agency-info">
-            <img src="profile.jpeg" class="profilepic">
-            <span>Perbadanan [placeholder]</span>
-        </div>
-        <img src="info.jpg" id="infographic">
+        <hr>
+        <br>
+        <p>Sila Log masuk untuk makluman terkini</p>
     </section>
 
     <footer>

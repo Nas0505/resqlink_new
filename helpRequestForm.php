@@ -13,29 +13,36 @@ require('fetchProfile.php');
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styleForm.css" type="text/css" >
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDGsJgXUsxu9MAkuqXwU9G4S70wTlgPB7Y&libraries=maps,marker"></script>
+  <script>
+    function toggleMenu() {
+    document.getElementById("navLinks").classList.toggle("show");
+    }
+    </script>
 
 </head>
 <body>
    <header>
-        <div>
-            <h1>RESQLINK</h1>
-        </div>
-        <nav>
-            <a href="victims.php">Utama</a>
-            <a href="infoLogin.php">Info</a>
-            <a href="contactLogin.php">Hubungi Kami</a>
-            <a href="helpRequestForm.php">Mohon Bantuan</a>
-            <a href="notification.php">Notifikasi</a>
-        </nav>
-
-       <div class="user-info">
-            <a href= "profile.php"><img src="<?php echo htmlspecialchars($profile_pic); ?>"  alt="User Icon" class="profilepic"></a>
-            <div class="user-text"><?php echo htmlspecialchars($full_name); ?><br> 
-            <a href="logout.php" class="logout-btn">Logout</a>
-            </div> 
-        </div>
+  <div class="header-left">
+    <div class="burger" onclick="toggleMenu()">☰</div>
+    <h1>RESQLINK</h1>
+  </div>
+  <nav class="nav-links" id="navLinks">
+    <a href="victims.php">Utama</a>
+    <a href="infoLogin.php">Info</a>
+    <a href="contactLogin.php">Hubungi Kami</a>
+    <a href="helpRequestForm.php">Mohon Bantuan</a>
+    <a href="notification.php">Notifikasi</a>
+  </nav>
+  <div class="user-info">
+    <a href="profile.php">
+      <img src="<?php echo htmlspecialchars($profile_pic); ?>" alt="User Icon" class="profilepic">
+    </a>
+    <div class="user-text">
+      <?php echo htmlspecialchars($full_name); ?><br>
+      <a href="logout.php" id="logout">Log Out</a>
     </div>
-    </header>
+  </div>
+</header>
 
   <div class="container">
         <div>

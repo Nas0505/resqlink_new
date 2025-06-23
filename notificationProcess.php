@@ -1,7 +1,6 @@
 <?php
 require('connect.php');
 date_default_timezone_set('Asia/Kuala_Lumpur');
-session_start();
 
 if (!isset($_SESSION['email'])) {
     die("Session expired. Please login again.");
