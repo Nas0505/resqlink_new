@@ -1,0 +1,182 @@
+.edit-form input[type="text"],
+.edit-form input[type="file"],
+.edit-form select {
+    padding: 0.75rem;
+    width: 100%;
+    margin-bottom: 1rem;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+.edit-form button {
+    width: 100%;
+    padding: 0.75rem;
+    margin-top: 0.5rem;
+    border-radius: 8px;
+    border: none;
+    font-weight: bold;
+    background-color: #3e4c70;
+    color: white;
+    transition: 0.3s;
+}
+
+.edit-form button:hover {
+    background-color: #6277a9;
+    color: white;
+}
+
+.profile-view {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  background-color: #7286bf;
+  color:white;
+  border-radius: 10px;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', sans-serif;
+}
+
+body {
+    background-color: #f4f7fb;
+    color: #333;
+}
+
+.profilepic {
+    width: 40px;
+    height: 40px;
+    border-radius: 100%;
+}
+
+#profile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1em;
+}
+
+#profile-header button a{
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+#profile-header button:hover {
+    background-color: #6277a9;
+    color: white;
+}
+
+header {
+    background-color: #5e6d92;
+    color: white;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header h1 {
+    font-size: 1.5rem;
+}
+
+nav a {
+    margin: 0 0.5rem;
+    text-decoration: none;
+    color: white;
+    font-weight: 600;
+}
+
+nav a:hover{
+    color:#1c283e;
+}
+
+nav a:active{
+    color:#fefefe;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #5e6d92;
+    color: white;
+    margin-top: 2em;
+}
+
+#profile-view {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    color:white;
+    border-radius: 10px;
+    margin-top: 1em;
+}
+
+#profile-details {
+    text-align: center;
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+#edit-form {
+    display: none;
+  }
+
+#profile-view img {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 5px solid white;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.user-info {
+    background-color: #3e4c70;
+    padding: 0.5rem 1rem;
+    border-radius: 1rem;
+    display: flex;
+    align-items: center;
+}
+
+#logout {
+    display: inline-block;
+    background-color: #596c9c; 
+    color: white;
+    padding: 8px 16px;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+#logout:hover {
+    background-color: #7fabdb;
+    color:#1c283e;
+}
+
+button {
+    background-color: #3e4c70;
+    color:white;
+    border-radius: 20%;
+    border: none;
+    padding:10px;
+    text-decoration: none;
+}
+
+button a {
+    color: white;
+    text-decoration: none;
+}
+
+button:hover {
+    background-color: #6277a9;
+    color:#3e4c70;
+}
+
