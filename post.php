@@ -2,13 +2,70 @@
 session_start();
 include('connect.php');
 include('loginAdmin.html');
+
+// Handle deletion
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_daerah'])) {
+    $daerahToDelete = trim($_POST['delete_daerah']);
+
+    if (file_exists('flood_data.json')) {
+        $floodData = json_decode(file_get_contents('flood_data.json'), true);
+        if (isset($floodData[$daerahToDelete])) {
+            unset($floodData[$daerahToDelete]);
+            file_put_contents('flood_data.json', json_encode($floodData));
+        }
+    }
+
+    echo "<script>alert('Data daerah berjaya dipadam.'); window.location='post.php';</script>";
+    exit;
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_flood'])) {
+    $daerah = trim($_POST['daerah']);
+    $jumlah = intval($_POST['jumlah']);
+
+    if (!empty($daerah)) {
+        $floodData = [];
+
+        if (file_exists('flood_data.json')) {
+            $floodData = json_decode(file_get_contents('flood_data.json'), true);
+        }
+
+        $floodData[$daerah] = $jumlah;
+
+        file_put_contents('flood_data.json', json_encode($floodData));
+        echo "<script>alert('Data banjir berjaya disimpan!'); window.location='post.php';</script>";
+        exit;
+    }
+}
+
+$floodData = [];
+if (file_exists('flood_data.json')) {
+    $floodData = json_decode(file_get_contents('flood_data.json'), true);
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['pengumuman'])) {
+    $cleaned = [];
+
+    foreach ($_POST['pengumuman'] as $item) {
+        $text = trim($item);
+        if (!empty($text)) {
+            $cleaned[] = $text;
+        }
+    }
+
+    if (!empty($cleaned)) {
+        file_put_contents('announcement.txt', implode(' | ', $cleaned));
+    }
+
+    echo "<script>alert('Pengumuman berjaya dikemaskini!'); window.location.href='post.php';</script>";
+    exit();
+}
 ?>
 
 <!DOCTYPE html>
 
 <?php
-session_start();
-include('connect.php');
+
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['pengumuman'])) {
     $cleaned = [];
@@ -27,8 +84,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['pengumuman'])) {
     echo "<script>alert('Pengumuman berjaya dikemaskini!'); window.location.href='post.php';</script>";
     exit();
 }
-
-include('loginAdmin.html');
 ?>
 
 <html>
@@ -140,27 +195,43 @@ include('loginAdmin.html');
         }
     </script>
 
-    <form method="POST" action="index.php">  <!-- Submit to index.php -->
-        <table>
+   <h2>Kemaskini Statistik Banjir</h2>
+<form method="POST" action="post.php">
+    <div class="input-wrapper">
+        <label>Nama daerah</label><br>
+        <input type="text" name="daerah" placeholder="Contoh: Jeli" required>
+    </div>
+    <div class="input-wrapper">
+        <label>Jumlah Mangsa</label><br>
+        <input type="number" name="jumlah" placeholder="Contoh: 150" required>
+    </div>
+    <input type="submit" name="save_flood" value="Simpan Statistik">
+</form>
+
+<h2>Senarai daerah & Jumlah Mangsa</h2>
+<table border="1" cellpadding="10" cellspacing="0">
+    <thead>
         <tr>
-            <td>Daerah</td>
-            <td>Jumlah Mangsa</td>
+            <th>daerah</th>
+            <th>Jumlah Mangsa</th>
+            <th>Tindakan</th>
         </tr>
-        <tr><div>
-            <td>Jeli<td>
-            <td><input name="total1" type="text"><td>
-        </tr></div>  
-        <tr><div>
-            <td>Pasir Mas<td>
-            <td><input name="total2" type="text"><td>
-        </tr></div>  
-        <tr><div>
-            <td>Pasir Puteh<td>
-            <td><input name="total3" type="text"><td>
-        </tr></div>  
-        </table>
-        <input type="submit" value="Submit">
-    
-    </form>
+    </thead>
+    <tbody>
+        <?php foreach ($floodData as $daerah => $jumlah): ?>
+        <tr>
+            <td><?= htmlspecialchars($daerah) ?></td>
+            <td><?= number_format($jumlah) ?></td>
+            <td>
+                <form method="POST" action="post.php" style="display:inline;">
+                    <input type="hidden" name="delete_daerah" value="<?= htmlspecialchars($daerah) ?>">
+                    <input type="submit" value="Padam" onclick="return confirm('Padam data untuk <?= htmlspecialchars($daerah) ?>?')">
+                </form>
+            </td>
+        </tr>
+        <?php endforeach; ?>
+    </tbody>
+</table>
+
 </body>
 </html>
