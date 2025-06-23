@@ -10,6 +10,7 @@ if (!isset($_SESSION['email'])) {
 $email = $_SESSION['email'];
 $userId = null;
 
+// Get UserId from email (users table)
 $stmtUser = $conn->prepare("SELECT UserId FROM users WHERE Email = ?");
 if (!$stmtUser) die("Prepare failed: " . $conn->error);
 $stmtUser->bind_param("s", $email);
@@ -24,11 +25,13 @@ if ($resUser && $resUser->num_rows === 1) {
 }
 $stmtUser->close();
 
+// Initial values
 $organization_name = "";
 $area = "";
 $profile_pic = "profile.jpeg";
 
-$stmtNgo = $conn->prepare("SELECT OrganizationName, AreasOfOperations, profile_pic FROM ngouser WHERE UserId = ?");
+// Get NGO details from ngouser table
+$stmtNgo = $conn->prepare("SELECT OrganizationName, AreasOfOperations FROM ngouser WHERE UserId = ?");
 if (!$stmtNgo) die("Prepare failed: " . $conn->error);
 $stmtNgo->bind_param("s", $userId);
 $stmtNgo->execute();
@@ -38,12 +41,25 @@ if ($resNgo && $resNgo->num_rows === 1) {
     $ngoData = $resNgo->fetch_assoc();
     $organization_name = $ngoData['OrganizationName'];
     $area = $ngoData['AreasOfOperations'];
-    if (!empty($ngoData['profile_pic'])) {
-        $profile_pic = $ngoData['profile_pic'];
-    }
 }
 $stmtNgo->close();
 
+// Get profile picture from users table
+$stmtPic = $conn->prepare("SELECT Profile_pic FROM users WHERE UserId = ?");
+if (!$stmtPic) die("Prepare failed: " . $conn->error);
+$stmtPic->bind_param("s", $userId);
+$stmtPic->execute();
+$resPic = $stmtPic->get_result();
+
+if ($resPic && $resPic->num_rows === 1) {
+    $picData = $resPic->fetch_assoc();
+    if (!empty($picData['Profile_pic'])) {
+        $profile_pic = $picData['Profile_pic'];
+    }
+}
+$stmtPic->close();
+
+// Handle profile update
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $new_name = trim($_POST['organization_name']);
     $new_area = trim($_POST['area']);
@@ -51,28 +67,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (!is_dir($uploadDir)) mkdir($uploadDir, 0775, true);
 
+    // Update profile picture if uploaded
     if (isset($_FILES['profile_pic']) && $_FILES['profile_pic']['error'] === UPLOAD_ERR_OK) {
         $file_name = basename($_FILES["profile_pic"]["name"]);
         $file_path = $uploadDir . uniqid() . "_" . $file_name;
         if (!move_uploaded_file($_FILES["profile_pic"]["tmp_name"], $file_path)) {
             die("Failed to upload file.");
         }
-        $stmtUpdate = $conn->prepare("UPDATE ngouser SET OrganizationName = ?, AreasOfOperations = ?, profile_pic = ? WHERE UserId = ?");
-        if (!$stmtUpdate) die("Prepare failed: " . $conn->error);
-        $stmtUpdate->bind_param("ssss", $new_name, $new_area, $file_path, $userId);
-    } else {
-        $stmtUpdate = $conn->prepare("UPDATE ngouser SET OrganizationName = ?, AreasOfOperations = ? WHERE UserId = ?");
-        if (!$stmtUpdate) die("Prepare failed: " . $conn->error);
-        $stmtUpdate->bind_param("sss", $new_name, $new_area, $userId);
+
+        // Update picture in users table
+        $stmtUpdatePic = $conn->prepare("UPDATE users SET Profile_pic = ? WHERE UserId = ?");
+        if (!$stmtUpdatePic) die("Prepare failed: " . $conn->error);
+        $stmtUpdatePic->bind_param("ss", $file_path, $userId);
+        $stmtUpdatePic->execute();
+        $stmtUpdatePic->close();
     }
 
-    if ($stmtUpdate->execute()) {
-        $stmtUpdate->close();
-        header("Location: editprofile.php");
-        exit();
-    } else {
-        die("Update failed: " . $stmtUpdate->error);
-    }
+    // Update org name and area in ngouser
+    $stmtUpdate = $conn->prepare("UPDATE ngouser SET OrganizationName = ?, AreasOfOperations = ? WHERE UserId = ?");
+    if (!$stmtUpdate) die("Prepare failed: " . $conn->error);
+    $stmtUpdate->bind_param("sss", $new_name, $new_area, $userId);
+    $stmtUpdate->execute();
+    $stmtUpdate->close();
+    $_SESSION['OrganizationName'] = $new_name;
+    $_SESSION['AreaOfOperations'] = $new_area;
+    header("Location: ngomain.php");
+    exit();
 }
 ?>
 
