@@ -2,11 +2,19 @@
 require('connect.php');
 session_start();
 date_default_timezone_set('Asia/Kuala_Lumpur');
-$result = $conn->query("SELECT * FROM vicrequest ORDER BY CreationDate ASC");
+
+$ngo_area = $_SESSION['AreaOfOperations'];
+// Get all requests, ordered by date
+$result = $conn->query("SELECT * FROM vicrequest 
+                        ORDER BY FIELD(Status, 'Pending', 'In Progress', 'Completed') AND FIELD(UrgencyLvl, 'urgent', 'moderate', 'non-urgent')
+                        JOIN victimuser ON vicrequest.UserId = victimuser.UserId,
+                        CreationDate ASC, 
+                        WHERE victimuser.location = ngo_area");
 if (!$result) {
     die("Query failed: " . $conn->error);
 }
 $requests = [];
+
 ?>
 
 <!DOCTYPE html>
@@ -34,6 +42,7 @@ $requests = [];
   </a>
 </header>
 
+
 <section class="permohonan-section">
   <h2>Permohonan</h2>
   <hr>
@@ -44,6 +53,7 @@ $requests = [];
       $reqId = $row['ReqId'];
       $urgency = strtolower(trim($row['UrgencyLvl'] ?? ''));
       $urgencyDisplay = $row['UrgencyLvl'] ?? 'Unknown';
+      
 
       $urgencyClass = match($urgency) {
         'non-urgent' => 'urgency-low',
@@ -59,8 +69,10 @@ $requests = [];
         'type' => $row['RequestType'],
         'urgency' => $urgencyDisplay,
       ];
+
+
   ?>
-  <div class="permohonan-card <?= $urgencyClass ?> <?= $row['Status'] === 'completed' ? 'completed' : '' ?>">
+  <div class="permohonan-card <?= $urgencyClass ?> <?= $row['Status'] === 'Completed' ? 'completed' : '' ?>">
     <div class="card-header">
       <span>🕒 <?= date("H:i d/m/y", strtotime($row['CreationDate'])) ?></span>
       <span class="status <?= $row['Status'] ?>"><?= ucfirst($row['Status']) ?></span>
@@ -68,10 +80,24 @@ $requests = [];
       <p class="urgency-badge <?= $urgencyClass ?>">Urgency: <?= htmlspecialchars($urgencyDisplay) ?></p>
       <p>Location: Lat: <?= htmlspecialchars($row['Latitude']) ?>, Lon: <?= htmlspecialchars($row['Longitude']) ?></p>
     </div>
-
     <div class="card-body">
       <div class="map-box">
-        <div id="map-<?= $reqId ?>" style="width: 100%; height: 250px; border-radius: 10px;"></div>
+        <div id="map-<?= $reqId ?>" 
+        class="map-container" 
+        data-lat="<?= htmlspecialchars($row['Latitude']) ?>" 
+        data-lon="<?= htmlspecialchars($row['Longitude']) ?>" 
+        data-type="<?= htmlspecialchars($row['RequestType']) ?>" 
+        data-urgency="<?= htmlspecialchars($urgencyDisplay) ?>"
+        style="width: 100%; height: 250px; border-radius: 10px;">
+        </div>
+      </div>
+      <div class="request-type-list">
+        <strong>Jenis Permohonan:</strong><br>
+        <?php 
+          $types = explode(',', $row['RequestType']); // Split comma-separated types
+          foreach ($types as $type): ?>
+            <span class="request-type-badge"><?= htmlspecialchars(trim($type)) ?></span>
+        <?php endforeach; ?>
       </div>
     </div>
 
@@ -80,8 +106,15 @@ $requests = [];
          <input type="hidden" name="request_id" value="<?= $row['ReqId'] ?>">
          <button class="accept-btn">Terima Tugas</button>
       </form>
-    <?php else: ?>
-      <button class="accept-btn" disabled>✅ Telah Diterima</button>
+
+    <?php elseif ($row['Status'] === 'In Progress'): ?>
+      <form method="POST" action="updatedTask.php">
+         <input type="hidden" name="request_id" value="<?= $row['ReqId'] ?>">
+         <button class="accept-btn">✔ Tandai Selesai</button>
+      </form>
+
+    <?php elseif ($row['Status'] === 'Completed'): ?>
+      <p class="completed-status">✅ Tugas telah diselesaikan</p>
     <?php endif; ?>
   </div>
   <?php 
@@ -95,12 +128,18 @@ $requests = [];
 <footer class="footer">Contacts</footer>
 
 <script>
-  const requests = <?= json_encode($requests) ?>;
-
   function initAllMaps() {
-    requests.forEach(req => {
-      const latLng = { lat: parseFloat(req.lat), lng: parseFloat(req.lon) };
-      const map = new google.maps.Map(document.getElementById(req.id), {
+    const maps = document.querySelectorAll('.map-container');
+
+    maps.forEach(mapDiv => {
+      const lat = parseFloat(mapDiv.dataset.lat);
+      const lon = parseFloat(mapDiv.dataset.lon);
+      const type = mapDiv.dataset.type;
+      const urgency = mapDiv.dataset.urgency;
+
+      const latLng = { lat: lat, lng: lon };
+
+      const map = new google.maps.Map(mapDiv, {
         center: latLng,
         zoom: 14
       });
@@ -108,12 +147,13 @@ $requests = [];
       new google.maps.Marker({
         map: map,
         position: latLng,
-        title: req.type + " - " + req.urgency
+        title: type + " - " + urgency
       });
     });
   }
 
   window.addEventListener("load", initAllMaps);
 </script>
+
 </body>
 </html>

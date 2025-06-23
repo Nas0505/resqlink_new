@@ -35,9 +35,5 @@ header("refresh:3; url=index.html");
             window.location.href = "index.html";
         }, 3000);
     </script>
-
-        <footer>
-        <p>&copy; 2023 ResQLink. All rights reserved.</p>
-    </footer>
 </body>
 </html>

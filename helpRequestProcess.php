@@ -1,12 +1,14 @@
 <?php
 require('connect.php');
 session_start();
+date_default_timezone_set('Asia/Kuala_Lumpur');
 $email = $_SESSION['email'];
 $lat = $_POST['latitude'];
 $lon = $_POST['longitude'];
 $urg = $_POST['urgency'];
 $catArray = isset($_POST['category']) ? $_POST['category'] : [];
-$cat = implode(", ", $catArray);
+$cat = implode(",", $catArray);
+$reqId=uniqid("REQ");
 
 $email = $_SESSION['email'];
 $getIdStmt = $conn->prepare("SELECT UserId FROM users WHERE Email = ?");
@@ -36,8 +38,8 @@ if ($urg === "") {
 }
 
 else {
-    $sql = "INSERT INTO vicrequest (UserId, Latitude, Longitude, RequestType, UrgencyLvl)
-        VALUES ('$userId', '$lat', '$lon', '$cat', '$urg')";
+    $sql = "INSERT INTO vicrequest (ReqId,UserId, Latitude, Longitude, RequestType, UrgencyLvl)
+        VALUES ('$reqId','$userId', '$lat', '$lon', '$cat', '$urg')";
 
     if ($conn->query($sql) === TRUE) {
         //echo "New record created successfully";

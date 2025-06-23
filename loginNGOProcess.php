@@ -1,13 +1,9 @@
 <?php
 session_start();
-$conn = new mysqli("localhost", "root", "", "resqlink");
+require('connect.php');
 
 $mygovid = $_POST['RegistrationNum'];
 $password = $_POST['password'];
-
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
 
 $sql = "SELECT users.*, ngouser.RegistrationNum, ngouser.OrganizationName, ngouser.VerificationStatus 
         FROM users 
@@ -21,13 +17,14 @@ $result = $stmt->get_result();
 
 if ($result->num_rows === 1) {
     $user = $result->fetch_assoc();
-    $_SESSION['RegistrationNum'] = $user['RegistrationNum'];
 
     if (password_verify($password, $user['Password'])) {
+        $_SESSION['UserId'] = $user['UserId']; // ✅ Needed for uploads
         $_SESSION['RegistrationNum'] = $user['RegistrationNum'];
-    $_SESSION['ngo_name'] = $user['Name'];
-    $_SESSION['verification'] = $user['VerificationStatus'];
-    $_SESSION['OrganizationName'] = $user['OrganizationName'];
+        $_SESSION['ngo_name'] = $user['OrganizationName'];
+        $_SESSION['verification'] = $user['VerificationStatus'];
+        $_SESSION['OrganizationName'] = $user['OrganizationName'];
+
         header("Location: ngomain.php");
         exit;
     } else {

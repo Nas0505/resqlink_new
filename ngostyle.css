@@ -635,3 +635,14 @@ box1 h2{
       border-radius: 5px;
       cursor: pointer;
     }
+     .request-type-badge {
+  display: inline-block;
+  background-color: #fff0f0;
+  color: #5c0a0a;
+  border: 1px solid #5c0a0a;
+  border-radius: 12px;
+  padding: 5px 10px;
+  margin: 3px 5px 0 0;
+  font-size: 0.85rem;
+  font-weight: 500;
+}

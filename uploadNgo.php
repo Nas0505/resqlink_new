@@ -1,14 +1,17 @@
 <?php
 session_start();
 require('connect.php');
+
 echo "<pre>";
 print_r($_SESSION);
 echo "</pre>";
-if (empty($_SESSION['RegistrationNum'])) {
+
+// Ensure correct session
+if (empty($_SESSION['UserId'])) {
   die("Unauthorized access.");
 }
 
-$regNum = $_SESSION['RegistrationNum'];
+$UserId = $_SESSION['UserId']; // <-- CORRECT value to insert
 $caption = $_POST['caption'] ?? '';
 
 if (!isset($_FILES['media']) || $_FILES['media']['error'] !== UPLOAD_ERR_OK) {
@@ -25,8 +28,8 @@ if (!is_dir($targetDir)) {
 }
 
 if (move_uploaded_file($media['tmp_name'], $targetFile)) {
-  $stmt = $conn->prepare("INSERT INTO posts (RegistrationNum, caption, media_path) VALUES (?, ?, ?)");
-  $stmt->bind_param("sss", $regNum, $caption, $targetFile);
+  $stmt = $conn->prepare("INSERT INTO posts (UserId, caption, media_path) VALUES (?, ?, ?)");
+  $stmt->bind_param("sss", $UserId, $caption, $targetFile);
   if ($stmt->execute()) {
     header("Location: ngomain.php?upload=success");
     exit();

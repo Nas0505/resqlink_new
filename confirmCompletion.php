@@ -3,7 +3,7 @@ require('connect.php');
 session_start();
 date_default_timezone_set('Asia/Kuala_Lumpur');
 
-if (!isset($_POST['request_id'])) {
+if (!isset($_POST['request_id']) || !isset($_POST['confirm_completion'])) {
     echo "Invalid request.";
     exit();
 }
@@ -14,13 +14,13 @@ $requestId = $_POST['request_id'];
 $conn->begin_transaction();
 
 try {
-    // Only update if current status is 'Pending'
-    $sql = "UPDATE vicrequest SET Status = 'In Progress' WHERE ReqId = ? AND Status = 'Pending'";
+    // Update the ConfirmCompletion field
+    $sql = "UPDATE vicrequest SET ConfirmCompletion = 'yes' WHERE ReqId = ? AND Status = 'Completed'";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("s", $requestId);
     
     if (!$stmt->execute()) {
-        throw new Exception("Error updating task status");
+        throw new Exception("Error confirming completion");
     }
     
     // Check if any row was actually updated
@@ -35,7 +35,7 @@ try {
         if ($userResult->num_rows > 0) {
             $userId = $userResult->fetch_assoc()['UserId'];
             
-            // Create notification - using 'Unread' as StatusMessage since it's an ENUM
+            // Create notification for confirmation - using 'Unread' as StatusMessage
             $notiId = uniqid("NOTI");
             $timestamp = date("Y-m-d H:i:s");
             
@@ -44,7 +44,7 @@ try {
             $insertStmt->bind_param("ssss", $notiId, $userId, $requestId, $timestamp);
             
             if (!$insertStmt->execute()) {
-                throw new Exception("Error creating notification");
+                throw new Exception("Error creating confirmation notification");
             }
             
             $insertStmt->close();
@@ -58,7 +58,7 @@ try {
     // Commit transaction
     $conn->commit();
     
-    header("Location: ngopermohonan.php");
+    header("Location: notification.php");
     exit();
     
 } catch (Exception $e) {

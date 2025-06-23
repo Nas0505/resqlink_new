@@ -115,22 +115,26 @@ require('fetchPosts.php');
     </div>
 
     <section class="message-box">
-    <h3>Pesanan</h3>
-        <?php if (!empty($posts)): ?>
-            <?php foreach ($posts as $post): ?>
-                <div class="agency-info">
-                    <img src="<?php echo htmlspecialchars($post['NGOprofile_pic']); ?>" class="profilepic" alt="NGO Icon">
-                    <h5><?php echo htmlspecialchars(date("d M Y", strtotime($post['date']))); ?></h5>
-                    <span><?php echo htmlspecialchars($post['agencyName']); ?></span>
-                </div>
-                <img src="<?php echo htmlspecialchars($post['post']); ?>" id="infographic" alt="Infographic">
-                <p><?php echo htmlspecialchars($post['caption']); ?></p>
-                <hr>
-            <?php endforeach; ?>
-        <?php else: ?>
-            <p>Tiada pesanan buat masa ini.</p>
-        <?php endif; ?>
-    </section>
+        <h3>Pesanan</h3>
+            <?php if (!empty($posts)): ?>
+                <?php foreach ($posts as $post): ?>
+                    <div class="agency-info">
+                        <img src="<?php echo htmlspecialchars($post['NGOprofile_pic']); ?>" class="profilepic" alt="NGO Icon">
+                        <h5><?php echo htmlspecialchars(date("d M Y", strtotime($post['date']))); ?></h5>
+                        <span><?php echo htmlspecialchars($post['agencyName']); ?></span>
+                    </div>
+                    <?php if (strpos($post['post'], '.mp4') !== false): ?>
+                        <video src="<?php echo htmlspecialchars($post['post']); ?>" controls></video>
+                    <?php else: ?>
+                        <img src="<?php echo htmlspecialchars($post['post']); ?>" id="infographic" alt="Infographic">
+                    <?php endif; ?>
+                    <p><?php echo htmlspecialchars($post['caption']); ?></p>
+                    <hr>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <p>Tiada pesanan buat masa ini.</p>
+            <?php endif; ?>
+</section>
 
     <footer>
         <p>&copy; 2023 ResQLink. All rights reserved.</p>

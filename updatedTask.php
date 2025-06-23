@@ -14,8 +14,8 @@ $requestId = $_POST['request_id'];
 $conn->begin_transaction();
 
 try {
-    // Only update if current status is 'Pending'
-    $sql = "UPDATE vicrequest SET Status = 'In Progress' WHERE ReqId = ? AND Status = 'Pending'";
+    // Only update if current status is 'In Progress' - also set CompletionDate
+    $sql = "UPDATE vicrequest SET Status = 'Completed', CompletionDate = NOW() WHERE ReqId = ? AND Status = 'In Progress'";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("s", $requestId);
     

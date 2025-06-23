@@ -89,7 +89,7 @@ $posts = $conn->query("SELECT * FROM posts ORDER BY created_at DESC LIMIT 2");
           <img src="<?= htmlspecialchars($post['media_path']) ?>" alt="Post Media">
         <?php endif; ?>
         <p class="caption"><?= htmlspecialchars($post['caption']) ?></p>
-        <small>Dihantar oleh: <?= htmlspecialchars($post['RegistrationNum']) ?> pada <?= date('d/m/Y H:i', strtotime($post['created_at'])) ?></small>
+        <small>Dihantar oleh: <?= htmlspecialchars($post['UserId']) ?> pada <?= date('d/m/Y H:i', strtotime($post['created_at'])) ?></small>
       </div>
     <?php endwhile; ?>
   </div>

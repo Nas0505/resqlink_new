@@ -1,52 +1,53 @@
 <?php
 require('connect.php');
+date_default_timezone_set('Asia/Kuala_Lumpur');
+session_start();
+
+if (!isset($_SESSION['email'])) {
+    die("Session expired. Please login again.");
+}
 
 $email = $_SESSION['email'];
-$pendingRequests = [];
-$inProgressRequests = [];
-$completedRequests = [];
-$rejectedRequests = [];
-$allRequests = [];
+$notification = [];
 
-$sql = "SELECT * FROM vicrequest JOIN users ON vicrequest.UserId = users.UserId WHERE email = '$email'";
-$result = $conn->query($sql);
+// Step 1: Get user ID
+$getUserStmt = $conn->prepare("SELECT UserId FROM users WHERE Email = ?");
+$getUserStmt->bind_param("s", $email);
+$getUserStmt->execute();
+$userResult = $getUserStmt->get_result();
 
-if ($result && $result->num_rows > 0) {
-    while ($row = $result->fetch_assoc()) {
-    $status = strtolower($row['Status']);
-    $entry = [
-        'requestId' => $row['ReqId'],
-        'userId' => $row['UserId'],
-        'latitude' => $row['Latitude'],
-        'longitude' => $row['Longitude'],
-        'requestType' => $row['RequestType'],
-        'urgencyLevel' => $row['UrgencyLvl'],
-        'status' => $row['Status'],
-        'date' => $row['CreationDate']
-    ];
+if ($userResult->num_rows !== 1) {
+    die("User not found.");
+}
 
-    $allRequests[] = $entry;
+$userId = $userResult->fetch_assoc()['UserId'];
+$getUserStmt->close();
 
-    // categorize by status
-    switch ($status) {
-        case 'pending': $pendingRequests[] = $entry; break;
-        case 'in progress': $inProgressRequests[] = $entry; break;
-        case 'completed': $completedRequests[] = $entry; break;
-        case 'rejected': $rejectedRequests[] = $entry; break;
-    }
+// Step 2: Get all notifications for this user with request details
+$notifQuery = "SELECT n.*, v.Status as CurrentStatus, v.ConfirmCompletion 
+              FROM notification n
+              LEFT JOIN vicrequest v ON n.ReqId = v.ReqId
+              WHERE n.UserId = ? 
+              ORDER BY n.UpdateTime DESC";
+$notifStmt = $conn->prepare($notifQuery);
+$notifStmt->bind_param("s", $userId);
+$notifStmt->execute();
+$notifResult = $notifStmt->get_result();
 
-    // Create notification only if not already existing
-    $statusMessage = $row['Status'];
-    $updateTime = date("Y-m-d H:i:s");
-
-    $checkSql = "SELECT * FROM notification WHERE ReqId = '{$row['ReqId']}' AND StatusMessage = '{$statusMessage}'";
-    $checkResult = $conn->query($checkSql);
+while ($row = $notifResult->fetch_assoc()) {
+    // Get the actual status from vicrequest table since notification only has Unread/Read
+    $currentStatus = $row['CurrentStatus'] ?? 'Unknown';
     
-    if ($checkResult->num_rows == 0) {
-        $sql2 = "INSERT INTO notification (UserId, ReqId, StatusMessage, UpdateTime) 
-                 VALUES ('{$row['UserId']}', '{$row['ReqId']}', '{$statusMessage}', '{$updateTime}')";
-        $conn->query($sql2);
-    }
+    $notification[] = [
+        'notificationId' => $row['NotificationId'],
+        'ReqId' => $row['ReqId'],
+        'statusMessage' => $currentStatus, // Use actual status from vicrequest
+        'timestamp' => $row['UpdateTime'],
+        'status' => strtolower($currentStatus), // Convert to lowercase for comparison
+        'ConfirmCompletion' => $row['ConfirmCompletion'] ?? 'no',
+        'isRead' => $row['StatusMessage'] === 'Read' // Track if notification is read
+    ];
 }
-}
+
+$notifStmt->close();
 ?>
