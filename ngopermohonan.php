@@ -1,22 +1,33 @@
 <?php
 require('connect.php');
 session_start();
+
+if (!isset($_SESSION['UserId'])) {
+    header("Location: loginNGO.php");
+    exit();
+}
+
 date_default_timezone_set('Asia/Kuala_Lumpur');
 
-$ngo_area = $_SESSION['AreaOfOperations'];
-// Get all requests, ordered by date
-$result = $conn->query("SELECT * FROM vicrequest 
-                        ORDER BY FIELD(Status, 'Pending', 'In Progress', 'Completed') AND FIELD(UrgencyLvl, 'urgent', 'moderate', 'non-urgent')
-                        JOIN victimuser ON vicrequest.UserId = victimuser.UserId,
-                        CreationDate ASC, 
-                        WHERE victimuser.location = ngo_area");
+// Safely get the area from session
+$ngo_area = $conn->real_escape_string($_SESSION['AreaOfOperations'] ?? '');
+
+// Get all requests filtered by NGO's area
+$sql = "SELECT * FROM vicrequest 
+        JOIN victimuser ON vicrequest.UserId = victimuser.UserId
+        ORDER BY 
+            FIELD(vicrequest.Status, 'Pending', 'In Progress', 'Completed'),
+            FIELD(vicrequest.UrgencyLvl, 'Urgent', 'Medium', 'Non-urgent'),
+            vicrequest.CreationDate ASC";
+
+$result = $conn->query($sql);
+
 if (!$result) {
     die("Query failed: " . $conn->error);
 }
+
 $requests = [];
-
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -30,7 +41,7 @@ $requests = [];
   <a href="ngomain.php"><div class="logo">RESQLINK🌐</div></a>
   <div class="nav">
     <a href="ngomain.php"><button class="nav-btn">Utama</button></a>
-    <a href="ngoinfo.html"><button class="nav-btn">Info</button></a>
+    <a href="ngoinfo.php"><button class="nav-btn">Info</button></a>
     <a href="ngopermohonan.php"><button class="nav-btn active">Permohonan</button></a>
   </div>
   <a href="ngopost.php"><button class="post-btn">Post</button></a>
@@ -42,7 +53,6 @@ $requests = [];
   </a>
 </header>
 
-
 <section class="permohonan-section">
   <h2>Permohonan</h2>
   <hr>
@@ -53,13 +63,12 @@ $requests = [];
       $reqId = $row['ReqId'];
       $urgency = strtolower(trim($row['UrgencyLvl'] ?? ''));
       $urgencyDisplay = $row['UrgencyLvl'] ?? 'Unknown';
-      
 
-      $urgencyClass = match($urgency) {
-        'non-urgent' => 'urgency-low',
-        'moderate'   => 'urgency-medium',
-        'urgent'     => 'urgency-high',
-        default      => 'urgency-unknown'
+      $urgencyClass = match($urgencyDisplay) {
+          'Non-Urgent' => 'urgency-low',
+          'Moderate'     => 'urgency-moderate',
+          'Urgent'     => 'urgency-high',
+          default       => 'urgency-unknown'
       };
 
       $requests[] = [
@@ -69,32 +78,34 @@ $requests = [];
         'type' => $row['RequestType'],
         'urgency' => $urgencyDisplay,
       ];
-
-
   ?>
   <div class="permohonan-card <?= $urgencyClass ?> <?= $row['Status'] === 'Completed' ? 'completed' : '' ?>">
     <div class="card-header">
       <span>🕒 <?= date("H:i d/m/y", strtotime($row['CreationDate'])) ?></span>
-      <span class="status <?= $row['Status'] ?>"><?= ucfirst($row['Status']) ?></span>
+      <span class="status <?= strtolower($row['Status']) ?>"><?= ucfirst($row['Status']) ?></span>
+    </div>
+    <div class="card-content">
       <h3><?= htmlspecialchars($row['RequestType']) ?></h3>
-      <p class="urgency-badge <?= $urgencyClass ?>">Urgency: <?= htmlspecialchars($urgencyDisplay) ?></p>
+      <div class="urgency-display <?= $urgencyClass ?>">
+        Urgency: <?= htmlspecialchars($urgencyDisplay) ?>
+      </div>
       <p>Location: Lat: <?= htmlspecialchars($row['Latitude']) ?>, Lon: <?= htmlspecialchars($row['Longitude']) ?></p>
     </div>
     <div class="card-body">
       <div class="map-box">
         <div id="map-<?= $reqId ?>" 
-        class="map-container" 
-        data-lat="<?= htmlspecialchars($row['Latitude']) ?>" 
-        data-lon="<?= htmlspecialchars($row['Longitude']) ?>" 
-        data-type="<?= htmlspecialchars($row['RequestType']) ?>" 
-        data-urgency="<?= htmlspecialchars($urgencyDisplay) ?>"
-        style="width: 100%; height: 250px; border-radius: 10px;">
+          class="map-container" 
+          data-lat="<?= htmlspecialchars($row['Latitude']) ?>" 
+          data-lon="<?= htmlspecialchars($row['Longitude']) ?>" 
+          data-type="<?= htmlspecialchars($row['RequestType']) ?>" 
+          data-urgency="<?= htmlspecialchars($urgencyDisplay) ?>"
+          style="width: 100%; height: 250px; border-radius: 10px;">
         </div>
       </div>
       <div class="request-type-list">
         <strong>Jenis Permohonan:</strong><br>
         <?php 
-          $types = explode(',', $row['RequestType']); // Split comma-separated types
+          $types = explode(',', $row['RequestType']); 
           foreach ($types as $type): ?>
             <span class="request-type-badge"><?= htmlspecialchars(trim($type)) ?></span>
         <?php endforeach; ?>
@@ -106,13 +117,11 @@ $requests = [];
          <input type="hidden" name="request_id" value="<?= $row['ReqId'] ?>">
          <button class="accept-btn">Terima Tugas</button>
       </form>
-
     <?php elseif ($row['Status'] === 'In Progress'): ?>
       <form method="POST" action="updatedTask.php">
          <input type="hidden" name="request_id" value="<?= $row['ReqId'] ?>">
          <button class="accept-btn">✔ Tandai Selesai</button>
       </form>
-
     <?php elseif ($row['Status'] === 'Completed'): ?>
       <p class="completed-status">✅ Tugas telah diselesaikan</p>
     <?php endif; ?>
