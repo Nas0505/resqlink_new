@@ -21,11 +21,11 @@ $posts = $conn->query("SELECT * FROM posts ORDER BY created_at DESC LIMIT 2");
     <a href="ngomain.php"><div class="logo">RESQLINK🌐</div></a>
     <div class="nav">
       <a href="ngomain.php"><button class="nav-btn active">Utama</button></a>
-      <a href="ngoinfo.html"><button class="nav-btn">Info</button></a>
+      <a href="ngoinfo.php"><button class="nav-btn">Info</button></a>
       <a href="ngopermohonan.php"><button class="nav-btn">Permohonan</button></a>
     </div>
     <a href="ngopost.php"><button class="post-btn">Post</button></a>
-    <a href="editprofile.php" class="profile-link">
+    <a href="editprofilengo.php" class="profile-link">
       <div class="profile">
         👤 <?= $_SESSION['OrganizationName'] ?? 'NGO' ?><br>
         <span><?= $_SESSION['RegistrationNum'] ?? '' ?>, <?= $_SESSION['AreaOfOperations'] ?? '' ?></span>

@@ -24,6 +24,7 @@ if ($result->num_rows === 1) {
         $_SESSION['ngo_name'] = $user['OrganizationName'];
         $_SESSION['verification'] = $user['VerificationStatus'];
         $_SESSION['OrganizationName'] = $user['OrganizationName'];
+        $_SESSION['email'] = $user['Email'];
 
         header("Location: ngomain.php");
         exit;

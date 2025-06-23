@@ -45,7 +45,7 @@ $requests = [];
     <a href="ngopermohonan.php"><button class="nav-btn active">Permohonan</button></a>
   </div>
   <a href="ngopost.php"><button class="post-btn">Post</button></a>
-  <a href="editprofile.php" class="profile-link">
+  <a href="editprofilengo.php" class="profile-link">
     <div class="profile">
       👤 <?= $_SESSION['OrganizationName'] ?? 'NGO' ?><br>
       <span><?= $_SESSION['RegistrationNum'] ?? '' ?>, <?= $_SESSION['AreaOfOperations'] ?? '' ?></span>
