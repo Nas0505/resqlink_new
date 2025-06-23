@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>RESQLINK Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #f9f2ff;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #8e74c1;
+      color: white;
+      padding: 10px 20px;
+    }
+
+    .logo {
+      font-weight: bold;
+      font-size: 20px;
+    }
+
+    .nav {
+      display: flex;
+      gap: 10px;
+    }
+
+    .nav-btn {
+      background: transparent;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      font-size: 14px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .nav-btn.active {
+      background: white;
+      color: #8e74c1;
+    }
+
+    .post-btn {
+      background: #5c4080;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 10px;
+    }
+
+    .profile {
+      text-align: right;
+      font-size: 14px;
+    }
+
+    .dashboard {
+      padding: 20px;
+    }
+
+    .date-right {
+      float: right;
+      font-size: 0.9rem;
+      color: #777;
+    }
+
+    .dashboard-cards {
+      display: flex;
+      gap: 15px;
+      background: #dec3f5;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 20px;
+      justify-content: space-around;
+    }
+
+    .dash-card {
+      flex: 1;
+      text-align: center;
+    }
+
+    .dash-card h4 {
+      margin: 0;
+      font-size: 14px;
+    }
+
+    .dash-card p {
+      font-size: 24px;
+      font-weight: bold;
+      margin: 5px 0 0;
+    }
+
+    .chart-section {
+      background: #dec3f5;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 20px;
+    }
+
+    .permohonan-section {
+      padding: 20px;
+    }
+
+    .view-all {
+      float: right;
+      font-size: 14px;
+      color: #333;
+      cursor: pointer;
+    }
+
+    .filter-box {
+      text-align: right;
+      margin-bottom: 15px;
+    }
+
+    .permohonan-card {
+      background: #a64b4b;
+      color: white;
+      padding: 20px;
+      border-radius: 15px;
+      margin-bottom: 15px;
+    }
+
+    .permohonan-card .card-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+
+    .accept-btn {
+      background: #5c2c2c;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 12px;
+      font-size: 14px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .footer {
+      background: #8e74c1;
+      color: white;
+      text-align: center;
+      padding: 15px;
+      margin-top: 40px;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+  <header class="top-bar">
+    <div class="logo">RESQLINK🌐</div>
+    <div class="nav">
+      <button class="nav-btn">Utama</button>
+      <button class="nav-btn">Info</button>
+      <button class="nav-btn active">Requests</button>
+    </div>
+    <button class="post-btn">Post</button>
+    <div class="profile">👤 Username<br><span>state, city</span></div>
+  </header>
+
+  <section class="dashboard">
+    <h2>Dashboard <span class="date-right">dd/mm/yy</span></h2>
+    <div class="dashboard-cards">
+      <div class="dash-card">
+        <h4>Request Completed</h4>
+        <p>100</p>
+      </div>
+      <div class="dash-card">
+        <h4>Request Pending</h4>
+        <p>0</p>
+      </div>
+      <div class="dash-card">
+        <h4>Active Volunteers</h4>
+        <p>200</p>
+      </div>
+    </div>
+
+    <div class="chart-section">
+      <h3>Request Completed <span class="date-right">dd/mm/yy</span></h3>
+      <canvas id="requestChart" height="200"></canvas>
+    </div>
+  </section>
+
+  <section class="permohonan-section">
+    <h2>Request List <span class="view-all">view all →</span></h2>
+    <div class="filter-box">
+      <label>Filter ▼</label>
+      <select>
+        <option>Urgency</option>
+        <option>Items</option>
+        <option>Completion</option>
+      </select>
+    </div>
+
+    <div class="permohonan-card">
+      <div class="card-header">
+        <span>👤 Placeholder category</span>
+        <span>2101</span>
+      </div>
+      <p>Daerah [placeholder]</p>
+      <button class="accept-btn">Accept Request</button>
+    </div>
+  </section>
+
+  <footer class="footer">Contacts</footer>
+
+  <script>
+    const ctx = document.getElementById('requestChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Clothes/Blankets', 'Rice', 'Canned Food', 'Crackers/Bread', 'Clean Water', 'Cleanup'],
+        datasets: [{
+          label: 'Completed',
+          data: [10, 30, 30, 20, 50, 10],
+          backgroundColor: 'rgba(70, 50, 120, 0.8)'
+        }]
+      },
+      options: {
+        scales: {
+          y: { beginAtZero: true }
+        }
+      }
+    });
+  </script>
+
+</body>
+</html>
